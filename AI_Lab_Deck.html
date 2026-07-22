@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Lab · Plan de Acción y de Negocio</title>
+<style>
+  :root{
+    --navy:#1B2333;
+    --navy-soft:#242E42;
+    --accent:#5B8DEF;
+    --accent-dark:#2F5FD9;
+    --slate:#5B6472;
+    --light-bg:#F4F6FA;
+    --white:#FFFFFF;
+    --good:#2FAE5A;
+    --warn:#E0A62F;
+    --line:#E3E7EF;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--white);font-family:'Poppins','Segoe UI',sans-serif;color:var(--navy);}
+  .wrap{max-width:1180px;margin:0 auto;padding:56px 32px 90px;}
+
+  header{margin-bottom:34px;}
+  .eyebrow{color:var(--accent-dark);font-weight:700;font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+  h1{font-size:38px;margin:0 0 12px;font-weight:800;letter-spacing:-0.5px;}
+  .sub{color:var(--slate);font-size:16px;max-width:760px;line-height:1.5;margin:0;}
+
+  /* Top-level section switcher */
+  .top-nav{display:flex;gap:12px;margin:36px 0 46px;border-bottom:2px solid var(--line);}
+  .top-tab{
+    padding:14px 6px;margin-right:28px;font-weight:700;font-size:15.5px;color:var(--slate);
+    cursor:pointer;border-bottom:3px solid transparent;transform:translateY(2px);
+  }
+  .top-tab.active{color:var(--navy);border-bottom-color:var(--accent);}
+  .section{display:none;}
+  .section.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- Shared card look ---------- */
+  .card{border:1px solid var(--line);border-radius:16px;background:var(--white);}
+
+  /* ===================== PLAN DE ACCIÓN (timeline) ===================== */
+  .tabs{display:flex;gap:10px;margin:0 0 8px;flex-wrap:wrap;}
+  .tab{flex:1;min-width:220px;background:var(--light-bg);border:2px solid transparent;border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .18s ease;}
+  .tab:hover{border-color:var(--accent);}
+  .tab.active{background:var(--navy);}
+  .tab.active .tab-phase, .tab.active .tab-window{color:var(--white);}
+  .tab.active .tab-window{color:#AEB9CC;}
+  .tab-phase{font-weight:700;font-size:16px;color:var(--navy);}
+  .tab-window{font-size:12.5px;color:var(--slate);margin-top:3px;}
+  .tab-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;}
+
+  .rail{position:relative;height:6px;background:var(--line);border-radius:4px;margin:28px 0 40px;}
+  .rail-fill{position:absolute;top:0;left:0;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent-dark));transition:width .25s ease;}
+
+  .panel{display:none;}
+  .panel.active{display:block;animation:fade .25s ease;}
+
+  .panel-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:10px;}
+  .panel-title{font-size:22px;font-weight:800;margin:0;}
+  .panel-window{font-size:13px;color:var(--slate);background:var(--light-bg);padding:6px 14px;border-radius:20px;font-weight:600;}
+
+  .pillars{display:flex;flex-direction:column;gap:14px;}
+  .pillar{border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .pillar-head{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;background:var(--white);}
+  .pillar-head:hover{background:var(--light-bg);}
+  .pnum{font-weight:800;font-size:15px;color:var(--white);background:var(--accent);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .pillar-title{font-weight:700;font-size:15.5px;flex:1;}
+  .pillar-count{font-size:12px;color:var(--slate);}
+  .chev{transition:transform .2s ease;color:var(--slate);font-size:13px;}
+  .pillar.open .chev{transform:rotate(180deg);}
+
+  .actions{max-height:0;overflow:hidden;transition:max-height .28s ease;background:var(--light-bg);}
+  .pillar.open .actions{max-height:600px;}
+  .action-row{display:flex;gap:14px;align-items:flex-start;padding:12px 20px 12px 64px;border-top:1px solid #E9ECF3;}
+  .action-row:first-child{border-top:none;}
+  .action-week{flex-shrink:0;width:96px;font-size:11.5px;font-weight:700;color:var(--accent-dark);letter-spacing:.5px;text-transform:uppercase;padding-top:2px;}
+  .action-text{font-size:14.5px;color:var(--navy);line-height:1.4;flex:1;}
+  .action-owner{flex-shrink:0;font-size:11.5px;color:var(--white);background:var(--slate);padding:3px 10px;border-radius:20px;height:fit-content;font-weight:600;white-space:nowrap;}
+
+  .milestone{margin-top:18px;display:flex;gap:12px;align-items:center;background:var(--navy);color:var(--white);padding:16px 20px;border-radius:14px;}
+  .milestone .dot{width:10px;height:10px;border-radius:50%;background:var(--good);flex-shrink:0;}
+  .milestone b{color:var(--accent);}
+
+  /* ===================== PLAN DE NEGOCIO ===================== */
+  .biz-block{margin-bottom:52px;}
+  .biz-h{font-size:13px;font-weight:800;color:var(--accent-dark);letter-spacing:2px;text-transform:uppercase;margin:0 0 6px;}
+  .biz-title{font-size:24px;font-weight:800;margin:0 0 18px;}
+
+  /* Before/After */
+  .vp-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .vp-card{padding:24px;border-radius:16px;}
+  .vp-before{background:var(--light-bg);}
+  .vp-after{background:var(--navy);color:var(--white);}
+  .vp-label{font-size:11.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+  .vp-before .vp-label{color:var(--slate);}
+  .vp-after .vp-label{color:var(--accent);}
+  .vp-text{font-size:15px;line-height:1.55;}
+  .vp-before .vp-text{color:var(--navy);}
+  .vp-after .vp-text{color:#D7DEEC;}
+
+  /* Portfolio levels */
+  .levels{display:flex;flex-direction:column;gap:14px;}
+  .level{display:grid;grid-template-columns:120px 1fr 1.2fr 1.2fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .level > div{padding:18px 20px;}
+  .level-tag{background:var(--navy);color:var(--white);display:flex;align-items:center;font-weight:800;font-size:13.5px;}
+  .level-what{border-right:1px solid var(--line);}
+  .level-what .lt{font-weight:700;font-size:14.5px;margin-bottom:4px;}
+  .level-what .ld{font-size:13px;color:var(--slate);}
+  .level-prod{border-right:1px solid var(--line);font-size:13.5px;color:var(--navy);display:flex;align-items:center;}
+  .level-goal{font-size:13.5px;color:var(--slate);display:flex;align-items:center;}
+
+  /* Revenue model */
+  .rev-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .rev-card{background:var(--light-bg);border-radius:14px;padding:20px 18px;}
+  .rev-name{font-weight:700;font-size:14.5px;margin-bottom:8px;}
+  .rev-desc{font-size:13px;color:var(--slate);line-height:1.4;}
+  .golden-rule{margin-top:16px;background:#FDF6E9;border:1px solid #F0DBA6;color:#7A5B10;padding:14px 18px;border-radius:12px;font-size:14px;line-height:1.4;}
+
+  /* Execution model */
+  .exec-list{display:flex;flex-direction:column;gap:12px;}
+  .exec-row{display:flex;gap:16px;align-items:flex-start;background:var(--light-bg);border-radius:12px;padding:16px 18px;}
+  .exec-bullet{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;}
+  .exec-text{font-size:14.5px;line-height:1.45;}
+
+  /* Metrics */
+  .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .metric-card{border:1px solid var(--line);border-radius:14px;padding:18px 20px;}
+  .metric-card .m-title{font-weight:700;font-size:14.5px;margin-bottom:6px;}
+  .metric-card .m-desc{font-size:13px;color:var(--slate);line-height:1.4;}
+
+  /* Risks */
+  .risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .risk-card{border-left:none;background:#FDF1F1;border-radius:14px;padding:18px 20px;border:1px solid #F3D6D6;}
+  .risk-title{font-weight:700;font-size:14.5px;color:#B23B3B;margin-bottom:6px;display:flex;gap:8px;align-items:center;}
+  .risk-title .warn-dot{width:8px;height:8px;border-radius:50%;background:#C24444;}
+  .risk-desc{font-size:13.5px;color:#7A3535;line-height:1.45;}
+
+  footer{margin-top:56px;display:flex;justify-content:space-between;font-size:12px;color:var(--slate);border-top:1px solid var(--line);padding-top:16px;}
+
+  @media(max-width:800px){
+    .vp-grid,.rev-grid,.metric-grid,.risk-grid{grid-template-columns:1fr;}
+    .level{grid-template-columns:1fr;}
+    .level-tag{padding:12px 20px;}
+    .level > div{border-right:none !important;border-bottom:1px solid var(--line);}
+  }
+  @media(max-width:640px){
+    .wrap{padding:36px 18px 60px;}
+    h1{font-size:28px;}
+    .action-row{padding-left:20px;flex-wrap:wrap;}
+    .action-week{width:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">AI LAB · PMV AGENCY</div>
+    <h1>Presentación, Plan de Acción y Plan de Negocio</h1>
+    <p class="sub">Todo el ecosistema en un solo lugar: por qué lo hacemos, cómo se ejecuta semana a semana, y cómo se traduce en un modelo de negocio unificado para las tres unidades.</p>
+  </header>
+
+  <div class="top-nav" id="topNav">
+    <div class="top-tab active" data-section="0">00 · Presentación</div>
+    <div class="top-tab" data-section="1">01 · Plan de Acción</div>
+    <div class="top-tab" data-section="2">02 · Plan de Negocio</div>
+  </div>
+
+  <!-- ===================== SECTION 0: PRESENTACIÓN ===================== -->
+  <div class="section active" id="section-0">
+
+    <div class="biz-block">
+      <div class="biz-h">Objetivo del departamento</div>
+      <div class="biz-title">Un solo frente comercial</div>
+      <p style="font-size:15px;color:var(--slate);line-height:1.55;max-width:820px;margin:0 0 22px;">Que las tres unidades operen y se comuniquen como un solo frente comercial — aprovechando la multidisciplinariedad del equipo para resolver cualquier necesidad del cliente, sin fricción interna ni mensajes contradictorios.</p>
+      <div class="vp-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="vp-card vp-before"><div class="vp-label">Web Dev</div><div class="vp-text">Plataformas y producto propio: AuditX, Nura, Laira, Kotya, Genifai.</div></div>
+        <div class="vp-card vp-before"><div class="vp-label">AI R&D</div><div class="vp-text">Aterrizaje comercial de soluciones, procesos e integraciones a medida.</div></div>
+        <div class="vp-card vp-before"><div class="vp-label">Automation</div><div class="vp-text">Implementación de CRM (HubSpot, Vera), auditorías y consultoría.</div></div>
+      </div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">Por qué lo hacemos ahora</div>
+      <div class="biz-title">La situación de partida</div>
+      <div class="exec-list">
+        <div class="exec-row"><div class="exec-bullet" style="background:var(--navy)">•</div><div class="exec-text">Propuestas de 7 ítems espantan al cliente — las últimas 4 se cayeron por incluir de más.</div></div>
+        <div class="exec-row"><div class="exec-bullet" style="background:var(--navy)">•</div><div class="exec-text">Orbe (WhatsApp) y Vera (WhatsApp) son el mismo agente, presentados como distintos: confusión y negocios perdidos.</div></div>
+        <div class="exec-row"><div class="exec-bullet" style="background:var(--navy)">•</div><div class="exec-text">El rol de Automation está mal comunicado: no se sabe que somos HubSpot Platinum Partners ni que hacemos consultoría.</div></div>
+        <div class="exec-row"><div class="exec-bullet" style="background:var(--navy)">•</div><div class="exec-text">9 meses desde que se unificó la vertical sin bajar esto a un plan concreto.</div></div>
+      </div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">Los 5 pilares</div>
+      <div class="biz-title">De dónde sale el plan de acción</div>
+      <div class="levels">
+        <div class="level" style="grid-template-columns:70px 1fr;">
+          <div class="level-tag">01</div><div class="level-what" style="border-right:none;"><div class="lt">Reposicionamiento y comunicación</div></div>
+        </div>
+        <div class="level" style="grid-template-columns:70px 1fr;">
+          <div class="level-tag" style="background:var(--accent-dark)">02</div><div class="level-what" style="border-right:none;"><div class="lt">Modelo comercial de entrada única</div></div>
+        </div>
+        <div class="level" style="grid-template-columns:70px 1fr;">
+          <div class="level-tag" style="background:#3A4560">03</div><div class="level-what" style="border-right:none;"><div class="lt">Autonomía y negociación</div></div>
+        </div>
+        <div class="level" style="grid-template-columns:70px 1fr;">
+          <div class="level-tag" style="background:var(--good)">04</div><div class="level-what" style="border-right:none;"><div class="lt">Retención y bases frías</div></div>
+        </div>
+        <div class="level" style="grid-template-columns:70px 1fr;">
+          <div class="level-tag" style="background:var(--warn)">05</div><div class="level-what" style="border-right:none;"><div class="lt">Pricing y benchmarking</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">Cronograma</div>
+      <div class="biz-title">Tres fases hacia 2027</div>
+      <div class="rev-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="rev-card"><div class="rev-name">Ahora – Agosto</div><div class="rev-desc">Pilares 1, 3 y 4 — bajo esfuerzo, alto impacto, no dependen de desarrollo.</div></div>
+        <div class="rev-card"><div class="rev-name">Sept – Nov</div><div class="rev-desc">Ventana de decisión comercial — pilares 2 y 5 operando a full.</div></div>
+        <div class="rev-card"><div class="rev-name">Dic en adelante</div><div class="rev-desc">Consolidar el año y proyectar 2027.</div></div>
+      </div>
+    </div>
+
+    <div class="biz-block" style="margin-bottom:0;">
+      <div class="biz-h">Próximos pasos</div>
+      <div class="biz-title">Para salir de esta reunión con esto claro</div>
+      <div class="exec-list">
+        <div class="exec-row"><div class="exec-bullet">1</div><div class="exec-text">Validar los 5 pilares y el cronograma con el equipo completo.</div></div>
+        <div class="exec-row"><div class="exec-bullet">2</div><div class="exec-text">Definir responsables por pilar esta semana.</div></div>
+        <div class="exec-row"><div class="exec-bullet">3</div><div class="exec-text">Presentar avance en la reunión de seguimiento.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================== SECTION 1: PLAN DE ACCIÓN ===================== -->
+  <div class="section" id="section-1">
+    <div class="tabs" id="tabs"></div>
+    <div class="rail" id="rail"><div class="rail-fill" id="railFill"></div></div>
+    <div id="panels"></div>
+  </div>
+
+  <!-- ===================== SECTION 2: PLAN DE NEGOCIO ===================== -->
+  <div class="section" id="section-2">
+
+    <div class="biz-block">
+      <div class="biz-h">01 — Propuesta de valor</div>
+      <div class="biz-title">De tres conversaciones a una sola</div>
+      <div class="vp-grid">
+        <div class="vp-card vp-before">
+          <div class="vp-label">Antes</div>
+          <div class="vp-text">"Contratamos web con PMV" / "contratamos CRM con PMV" / "contratamos IA con PMV" — tres conversaciones, tres vendedores, discursos que a veces se pisan entre sí (Orbe vs. Vera).</div>
+        </div>
+        <div class="vp-card vp-after">
+          <div class="vp-label">Ahora</div>
+          <div class="vp-text">AI Lab diagnostica la operación comercial y de marketing del cliente, y resuelve lo que encuentre — con la herramienta correcta, propia o de partner. Un solo proveedor, un solo punto de entrada, un solo responsable de cuenta.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">02 — Arquitectura de la oferta</div>
+      <div class="biz-title">Portafolio en 3 niveles</div>
+      <div class="levels">
+        <div class="level">
+          <div class="level-tag">DIAGNÓSTICO</div>
+          <div class="level-what"><div class="lt">Puerta de entrada</div><div class="ld">Bajo costo o gratuita</div></div>
+          <div class="level-prod">AuditX & Auditoría básica</div>
+          <div class="level-goal">Generar el primer contacto y detectar la necesidad real</div>
+        </div>
+        <div class="level">
+          <div class="level-tag" style="background:var(--accent-dark)">HERRAMIENTA BASE</div>
+          <div class="level-what"><div class="lt">Solución estándar</div><div class="ld">Escalable, precio fijo</div></div>
+          <div class="level-prod">Nura · Laira · HubSpot / Vera</div>
+          <div class="level-goal">Cerrar rápido con un ticket predecible</div>
+        </div>
+        <div class="level">
+          <div class="level-tag" style="background:#3A4560">A MEDIDA</div>
+          <div class="level-what"><div class="lt">Integración / IA custom</div><div class="ld">Mayor complejidad</div></div>
+          <div class="level-prod">Orbe · Axia · Kotya · Genifai · Consultorías</div>
+          <div class="level-goal">Expandir la cuenta una vez hay confianza y datos</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">03 — Modelo de ingresos</div>
+      <div class="biz-title">Cuatro tipos de ingreso, un solo cliente</div>
+      <div class="rev-grid">
+        <div class="rev-card"><div class="rev-name">Entrada</div><div class="rev-desc">Auditoria o AuditX— recurrente bajo, alto volumen. Mide adopción, no rentabilidad.</div></div>
+        <div class="rev-card"><div class="rev-name">Base</div><div class="rev-desc">Fee de herramienta (Nura/Laira con benchmarking, Vera ~$350). Predecible, mensual.</div></div>
+        <div class="rev-card"><div class="rev-name">Expansión</div><div class="rev-desc">Implementación + acompañamiento ($750 piso) y proyectos a medida. Mayor margen.</div></div>
+        <div class="rev-card"><div class="rev-name">Retención</div><div class="rev-desc">1-2 meses gratis de Nura/Laira post-implementación para evitar fuga temprana.</div></div>
+      </div>
+      <div class="golden-rule">⚠ Regla de oro: nunca cobrar el nivel "a medida" en la primera factura. Si una propuesta nueva incluye Orbe o Axia desde el día uno, es señal de que se está rompiendo el modelo.</div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">04 — Modelo de ejecución</div>
+      <div class="biz-title">Cómo se mueve internamente</div>
+      <div class="exec-list">
+        <div class="exec-row"><div class="exec-bullet">1</div><div class="exec-text"><b>Un único responsable comercial por cuenta</b>, sin importar cuántas unidades toquen esa cuenta — evita el problema de negociación de terceros sin visibilidad de costos y/o contexto.</div></div>
+        <div class="exec-row"><div class="exec-bullet">2</div><div class="exec-text"><b>Rangos de autonomía documentados</b> (pilar 3 del plan de acción): ese responsable cierra dentro de rango sin escalar.</div></div>
+        <div class="exec-row"><div class="exec-bullet">3</div><div class="exec-text"><b>Aldair y Eve como soporte transversal de demos y personalización</b>: cuando una cuenta necesita ver más de un producto y personalizarlos, dan soporte sin que el cliente perciba "tres equipos distintos".</div></div>
+        <div class="exec-row"><div class="exec-bullet">4</div><div class="exec-text"><b>Traspaso a delivery:</b> cerrado el nivel 1 o 2, la unidad correspondiente ejecuta — pero el responsable comercial sigue siendo dueño de la relación para la expansión futura.</div></div>
+      </div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">05 — Métricas de éxito</div>
+      <div class="biz-title">Cómo sabemos si el modelo funciona</div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="m-title">Tasa de cierre por ticket</div><div class="m-desc">Propuestas de 1 solo ítem vs. las históricas de 7 — objetivo: subir tasa de cierre aunque baje el ticket inicial.</div></div>
+        <div class="metric-card"><div class="m-title">Progresión de nivel</div><div class="m-desc">% de cuentas que pasan de nivel 1→2 y 2→3 en los primeros 6 meses.</div></div>
+        <div class="metric-card"><div class="m-title">Reactivación de bases frías</div><div class="m-desc">Leads generados desde las bases frías de HubSpot reactivadas.</div></div>
+        <div class="metric-card"><div class="m-title">Ticket promedio a 12 meses</div><div class="m-desc">Debe subir aunque el ticket de entrada baje — así se valida la expansión.</div></div>
+      </div>
+    </div>
+
+    <div class="biz-block">
+      <div class="biz-h">06 — Riesgos a vigilar</div>
+      <div class="biz-title">Lo que puede romper el modelo</div>
+      <div class="risk-grid">
+        <div class="risk-card"><div class="risk-title"><span class="warn-dot"></span>Canibalización de márgenes</div><div class="risk-desc">Si todos entran por el diagnóstico gratuito y pocos suben de nivel, el modelo no sostiene el costo de adquisición. El benchmarking de pricing (pilar 5) es bloqueante, no opcional.</div></div>
+        <div class="risk-card"><div class="risk-title"><span class="warn-dot"></span>Dilución de responsabilidad</div><div class="risk-desc">Con un solo responsable por cuenta, si esa persona rota o se satura, la cuenta queda expuesta. Definir un backup por cuenta grande antes de escalar el modelo.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span id="footerLeft">Plan de Acción · Ejecución</span>
+    <span>AI Lab · PMV Agency</span>
+  </footer>
+</div>
+
+<script>
+const DATA = [
+  {
+    phase: "Fase 1", window: "Ahora → Agosto", color: "#5B8DEF", railPos: 12,
+    milestone: "Reunión de seguimiento  <b>todos los miércoles</b>: Revisión de avances, ajustes de propuestas y alineación de ejecución.",
+    pillars: [
+      { title: "01 · Reposicionamiento y comunicación", actions: [
+        ["Sem 1","Revisión y aprobación al contenido orgánico ya grabado/escrito","Aymé & Eve"],
+        ["Sem 1","Redactar el mensaje único para el agente de WhatsApp (Orbe = Vera, un solo discurso)","Charles"],
+        ["Sem 2","Publicar el primer lote de piezas aprobadas en redes","MKT Interno PMV"],
+        ["Sem 3","Actualizar bio, web y material comercial: HubSpot Platinum Partner + auditoría/consultoría","MKT & Comercial Interno PMV"],
+      ]},
+      { title: "03 · Autonomía y negociación", actions: [
+        ["Sem 1","Definir por escrito los rangos de descuento y condiciones que no requieren escalar","Departamento & Comercial"],
+        ["Sem 2","Asignar un responsable único de negociación por cuenta activa","Departamento"],
+        ["Sem 3","Documentar protocolo de respaldo de pricing antes de cualquier implementación","Departamento & Comercial"],
+      ]},
+      { title: "04 · Retención y bases frías", actions: [
+        ["Sem 1","Exportar y segmentar las bases frías de HubSpot (clientes con pauta activada, sin seguimiento)","Equipo Automation"],
+        ["Sem 2","Lanzar campaña de reactivación sobre esas bases","Equipo Automation & MKT Interno"],
+        ["Sem 3","Definir la oferta de licencia gratuita Nura/Laira post-implementación (1-2 meses)","Equipo Web Dev & Comercial"],
+      ]},
+    ]
+  },
+  {
+    phase: "Fase 2", window: "Septiembre → Noviembre", color: "#2F5FD9", railPos: 55,
+    milestone: "Ventana comercial de decisión del año: lo que no cierre aquí, se empuja a 2027.",
+    pillars: [
+      { title: "02 · Modelo comercial de entrada única", actions: [
+        ["Sem 1","Definir las acciones de diagnóstico como puerta de entrada estándar para todo cliente nuevo","Todo el equipo"],
+["Sem 2","Rediseñar el template de propuesta al modelo 'una línea + expansión'","Charles & Comercial"],
+        ["Sem 3","Formalizar las dos cotizaciones estándar: implementación+acompañamiento / solo herramienta","Todo el equipo"],
+        ["Sem 4-8","Piloto del nuevo modelo con los primeros clientes nuevos del trimestre","Todo el equipo"],
+      ]},
+      { title: "05 · Pricing y benchmarking", actions: [
+        ["Sem 1-2","Benchmarking de mercado para Nura y Laira","Charles + Equipo Web / AI Dev"],
+        ["Sem 3","Definir y justificar el nuevo pricing de ambas herramientas","Charles & Comercial"],
+        ["Sem 5","Revisar el concepto Company Brain (Axia + MCP a ClickUp/Gmail)","AI Dev + Charles"],
+      ]},
+    ]
+  },
+  {
+    phase: "Fase 3", window: "Diciembre en adelante", color: "#2FAE5A", railPos: 92,
+    milestone: "Cierre de año alineados como un solo frente comercial, con base para arrancar 2027 con foco.",
+    pillars: [
+      { title: "Consolidación", actions: [
+        ["Dic","Balance de resultados de los 5 pilares frente a lo comprometido","Todo el equipo"],
+        ["Dic","Documentar aprendizajes del nuevo modelo comercial para ajustar 2027","Todo el equipo"],
+        ["Dic","Proyectar objetivos y metas comerciales de 2027 por unidad","Todo el equipo"],
+      ]},
+    ]
+  }
+];
+
+const tabsEl = document.getElementById('tabs');
+const panelsEl = document.getElementById('panels');
+const railFill = document.getElementById('railFill');
+
+DATA.forEach((phaseData, i) => {
+  const tab = document.createElement('div');
+  tab.className = 'tab' + (i===0?' active':'');
+  tab.innerHTML = `<div class="tab-phase"><span class="tab-dot" style="background:${phaseData.color}"></span>${phaseData.phase}</div><div class="tab-window">${phaseData.window}</div>`;
+  tab.onclick = () => selectPhase(i);
+  tabsEl.appendChild(tab);
+
+  const panel = document.createElement('div');
+  panel.className = 'panel' + (i===0?' active':'');
+  panel.id = 'panel-'+i;
+
+  let pillarsHTML = '';
+  phaseData.pillars.forEach((p, pi) => {
+    let rows = p.actions.map(a => `
+      <div class="action-row">
+        <div class="action-week">${a[0]}</div>
+        <div class="action-text">${a[1]}</div>
+        <div class="action-owner">${a[2]}</div>
+      </div>`).join('');
+    const label = p.title.includes('·') ? p.title.split('·')[1].trim() : p.title;
+    const numTag = p.title.includes('·') ? p.title.split('·')[0].trim() : '';
+    pillarsHTML += `
+      <div class="pillar ${pi===0?'open':''}">
+        <div class="pillar-head" onclick="this.parentElement.classList.toggle('open')">
+          <div class="pnum" style="background:${phaseData.color}">${numTag || (pi+1)}</div>
+          <div class="pillar-title">${label}</div>
+          <div class="pillar-count">${p.actions.length} acciones</div>
+          <div class="chev">▾</div>
+        </div>
+        <div class="actions">${rows}</div>
+      </div>`;
+  });
+
+  panel.innerHTML = `
+    <div class="panel-head">
+      <h2 class="panel-title">${phaseData.phase} — ${phaseData.window}</h2>
+      <div class="panel-window">${phaseData.pillars.reduce((n,p)=>n+p.actions.length,0)} acciones en esta fase</div>
+    </div>
+    <div class="pillars">${pillarsHTML}</div>
+    <div class="milestone"><div class="dot"></div><div>${phaseData.milestone}</div></div>
+  `;
+  panelsEl.appendChild(panel);
+});
+
+function selectPhase(i){
+  document.querySelectorAll('.tab').forEach((t,idx)=>t.classList.toggle('active', idx===i));
+  document.querySelectorAll('.panel').forEach((p,idx)=>p.classList.toggle('active', idx===i));
+  railFill.style.width = DATA[i].railPos + '%';
+}
+selectPhase(0);
+
+// Top-level section switcher
+const footerLeft = document.getElementById('footerLeft');
+document.querySelectorAll('.top-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const idx = tab.dataset.section;
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', String(i)===idx));
+    const labels = { '0': 'Presentación · Onboarding', '1': 'Plan de Acción · Ejecución', '2': 'Plan de Negocio · Modelo de Ejecución' };
+    footerLeft.textContent = labels[idx];
+  });
+});
+</script>
+</body>
+</html>
